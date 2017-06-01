@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1F1E23</color>
+    <color name="colorPrimaryDark">#19181c</color>
+    <color name="colorAccent">#FF912FB1</color>
+    <color name="background">#1F1E23</color>
+    <color name="purple_light">#FF912FB1</color>
+    <color name="purple_light_opacity">#88912FB1</color>
+    <color name="purple">#6f278b</color>
+    <color name="purple_opacity">#886F278B</color>
+    <color name="pink">#FFfc4f73</color>
+    <color name="pink_pressed">#FFbc3f69</color>
+    <color name="gray">#FF8F8F91</color>
+    <color name="nav_menu_icons_unselected">#697789</color>
+    <color name="white">#fff</color>
+    <color name="white_50">#88ffffff</color>
+    <color name="semi_66_dark">#66000000</color>
+    <color name="semi_aa_dark">#AA000000</color>
+    <color name="light_pink">#DBC2E5</color>
+    <color name="light_violet">#CCA7D9</color>
+    <color name="dialog_background">#414141</color>
+    <color name="radio_button_color">#2c2b30</color>
+
+    <color name="text_light">#ddd</color>
+    <color name="text_desc">@color/gray</color>
+    <color name="black">#000</color>
+    <color name="green">#2DDFA9</color>
+    <color name="red">#f44336</color>
+    <color name="level_transparent">#be000000</color>
+    <color name="selector_item_pressed">#22ffffff</color>
+    <color name="east_side_80">#80b383c8</color>
+    <color name="east_side_transparent">#00b383c8</color>
+</resources>
