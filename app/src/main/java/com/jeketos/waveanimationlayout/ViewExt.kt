@@ -1,5 +1,6 @@
 package com.jeketos.waveanimationlayout
 
+import android.graphics.Color
 import android.os.Build
 import android.support.v4.view.ViewCompat
 import android.view.View
@@ -23,4 +24,8 @@ fun ViewTreeObserver.removeOnGlobalOnLayoutListener(victim: ViewTreeObserver.OnG
         @Suppress("DEPRECATION")
         removeGlobalOnLayoutListener(victim)
     }
+}
+
+fun changeColorAlpha(color: Int, alpha: Int): Int{
+    return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
 }

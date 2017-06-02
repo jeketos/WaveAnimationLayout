@@ -46,7 +46,7 @@ class WaveAnimateRelativeLayout: RelativeLayout {
         startY = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startY, 0f)
         startSize = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startSize, 1f)
         startColor = array.getColor(R.styleable.WaveAnimateRelativeLayout_startColor, Color.argb(128,255,255,255))
-        endColor = array.getColor(R.styleable.WaveAnimateRelativeLayout_endColor, Color.argb(0,255,255,255))
+        endColor = changeColorAlpha(startColor, 0)
         animDuration = array.getInt(R.styleable.WaveAnimateRelativeLayout_animDuration, DEFAULT_ANIM_DURATION)
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
@@ -144,7 +144,7 @@ class WaveAnimateRelativeLayout: RelativeLayout {
         if(fraction > ALPHA_START_FRACTION){
             val colorAlpha = Color.alpha(startColor)
             val alpha = (colorAlpha - ((fraction - ALPHA_START_FRACTION) * ALPHA_ANIM_SPEED * colorAlpha)).toInt()
-            return Color.argb(alpha, Color.red(startColor), Color.green(startColor), Color.red(startColor))
+            return changeColorAlpha(startColor, alpha)
         }
         return startColor
     }

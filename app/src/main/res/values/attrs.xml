@@ -5,7 +5,6 @@
         <attr name="startY" format="dimension" />
         <attr name="startSize" format="dimension" />
         <attr name="startColor" format="color" />
-        <attr name="endColor" format="color" />
         <attr name="animDuration" format="integer" />
         <attr name="wavesCount" format="integer" />
         <attr name="relativeTo" format="reference" />
