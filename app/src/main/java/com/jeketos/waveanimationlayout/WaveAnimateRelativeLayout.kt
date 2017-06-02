@@ -147,21 +147,22 @@ class WaveAnimateRelativeLayout: RelativeLayout {
     }
 
     private fun calculateZoom() {
-        if(relativeTo > 0){
+        val valueToDivide: Float
+        if(relativeTo > 0) {
             val relatedView = findViewById(relativeTo)
-            val x = (relatedView.x + relatedView.width / 2 - startSize / 2).toInt()
-            if (width / 2 > x) {
-                zoom = (width - x) / (startSize / 2)
-            } else {
-                zoom = (x + startSize) / (startSize / 2)
-            }
+            val viewCenterX = relatedView.x + relatedView.width / 2
+            val viewCenterY = relatedView.y + relatedView.height / 2
+            val array = arrayOf(viewCenterX, viewCenterY, width - viewCenterX, height - viewCenterY)
+            valueToDivide = array.max()!!
         } else {
-            if (width / 2 > startX) {
-                zoom = (width - startX) / (startSize / 2)
+            if(startX < 0 && startY < 0){
+                valueToDivide = Math.max(width / 2f, height / 2f)
             } else {
-                zoom = (startX + startSize) / (startSize / 2)
+                val array = arrayOf(startX, startY, width - startX, height - startY)
+                valueToDivide = array.max()!!
             }
         }
+        zoom = valueToDivide / (startSize / 2)
     }
 
 }
