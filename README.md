@@ -3,7 +3,7 @@
 ![Example2](gifs/Example2.gif)
 ![Example3](gifs/Example3.gif)
 ## Download
-Add it in your root build.gradle at the end of repositories:
+Add it to your root build.gradle at the end of repositories:
 ```groovy
 allprojects {
   repositories {
@@ -32,7 +32,7 @@ Add to your layout xml file WaveAnimateRelativeLayout
         app:startColor="@color/colorPrimary"
         >
 ```
-For auto start animation add to your Activity or Fragment next:
+For auto start animation add to your Activity or Fragment the code below:
 ```kotlin
 override fun onResume() {
     super.onResume()
@@ -55,4 +55,4 @@ Also you can use startAnim()/stopAnim() in any time by yourself.
 * `startSize` - start size of animated wave
 * `startColor` - start color of animated view
 
-If nothing of `startX, startY, relativeTo` not specified waves related to center of wave animation container.
+If `startX, startY, relativeTo` are not specified, waves are moving from the center of wave animation container.
