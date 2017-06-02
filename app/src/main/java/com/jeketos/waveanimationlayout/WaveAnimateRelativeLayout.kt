@@ -41,15 +41,15 @@ class WaveAnimateRelativeLayout: RelativeLayout {
 
     private fun getAttributes(context: Context, attrs: AttributeSet) {
         val array = context.theme.obtainStyledAttributes(attrs, R.styleable.WaveAnimateRelativeLayout, 0, 0)
-        startX = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startX, 0f)
-        startY = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startY, 0f)
+        startX = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startX, -1f)
+        startY = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startY, -1f)
+        relativeTo = array.getResourceId(R.styleable.WaveAnimateRelativeLayout_relativeTo, -1)
         startSize = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startSize, 1f)
         startColor = array.getColor(R.styleable.WaveAnimateRelativeLayout_startColor, Color.argb(128,255,255,255))
         endColor = changeColorAlpha(startColor, 0)
         animDuration = array.getInt(R.styleable.WaveAnimateRelativeLayout_animDuration, DEFAULT_ANIM_DURATION).toLong()
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
-        relativeTo = array.getResourceId(R.styleable.WaveAnimateRelativeLayout_relativeTo, 0)
         array.recycle()
     }
 
@@ -89,13 +89,18 @@ class WaveAnimateRelativeLayout: RelativeLayout {
     private fun createView(): View {
         val view = View(context)
         val layoutParams = LayoutParams(startSize.toInt(), startSize.toInt())
-        if (relativeTo != 0) {
+        if (relativeTo >= 0) {
             val relatedView = findViewById(relativeTo)
             layoutParams.leftMargin = (relatedView.x + relatedView.width / 2 - startSize / 2).toInt()
             layoutParams.topMargin = (relatedView.y + relatedView.height / 2 - startSize / 2).toInt()
         } else {
-            layoutParams.leftMargin = (startX).toInt()
-            layoutParams.topMargin = startY.toInt()
+            if(startX < 0 && startY < 0){
+                layoutParams.leftMargin = (this.width / 2 - startSize / 2).toInt()
+                layoutParams.topMargin = (this.height / 2 - startSize / 2).toInt()
+            } else {
+               layoutParams.leftMargin = if(startX < 0) 0 else startX.toInt()
+               layoutParams.topMargin  = if(startY < 0) 0 else startY.toInt()
+            }
         }
         view.layoutParams = layoutParams
         view.background = createGradientDrawable()
