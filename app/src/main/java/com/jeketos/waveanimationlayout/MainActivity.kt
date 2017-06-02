@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         animLayout.startAnim()
     }
-//////
+
     override fun onPause() {
         super.onPause()
         animLayout.stopAnim()

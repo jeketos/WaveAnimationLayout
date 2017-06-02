@@ -1,18 +1,17 @@
 package com.jeketos.waveanimationlayout
 
+import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Handler
 import android.support.annotation.IdRes
 import android.util.AttributeSet
-import android.util.Log
+import android.util.Property
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Animation
-import android.view.animation.ScaleAnimation
 import android.widget.RelativeLayout
 
 private val DEFAULT_ANIM_DURATION = 3000
@@ -25,7 +24,7 @@ class WaveAnimateRelativeLayout: RelativeLayout {
     private var startSize: Float = 1f
     private var startColor: Int = 0
     private var endColor: Int = 0
-    private var animDuration: Int = 0
+    private var animDuration: Long = 0
     private var wavesCount: Int = 0
     private var zoom: Float = 0f
     private var animatedViews: ArrayList<View> = ArrayList()
@@ -47,7 +46,7 @@ class WaveAnimateRelativeLayout: RelativeLayout {
         startSize = array.getDimension(R.styleable.WaveAnimateRelativeLayout_startSize, 1f)
         startColor = array.getColor(R.styleable.WaveAnimateRelativeLayout_startColor, Color.argb(128,255,255,255))
         endColor = changeColorAlpha(startColor, 0)
-        animDuration = array.getInt(R.styleable.WaveAnimateRelativeLayout_animDuration, DEFAULT_ANIM_DURATION)
+        animDuration = array.getInt(R.styleable.WaveAnimateRelativeLayout_animDuration, DEFAULT_ANIM_DURATION).toLong()
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
         wavesCount = array.getInt(R.styleable.WaveAnimateRelativeLayout_wavesCount, 3)
         relativeTo = array.getResourceId(R.styleable.WaveAnimateRelativeLayout_relativeTo, 0)
@@ -59,7 +58,6 @@ class WaveAnimateRelativeLayout: RelativeLayout {
             val waveIndex = wavesCount - 1
             val delay = animDuration / wavesCount
             calculateZoom()
-            Log.d("WaveAnimate","zoom - $zoom")
             (0..waveIndex).forEachIndexed { index, _ ->
                 startViewWaveAnimation((waveIndex - index) * delay)
             }
@@ -75,23 +73,33 @@ class WaveAnimateRelativeLayout: RelativeLayout {
     }
 
 
-    private fun startViewWaveAnimation(startDelay: Int){
+    private fun startViewWaveAnimation(startDelay: Long){
+        val view = createView()
+        addView(view, 0)
+        animatedViews.add(view)
+        val scaleX = createScaleAnimator(view, View.SCALE_X, zoom)
+        val scaleY = createScaleAnimator(view, View.SCALE_Y, zoom)
+        val colorAnim = createColorAnimator(view)
+        val animSet = AnimatorSet()
+        animSet.startDelay = startDelay
+        animSet.playTogether(scaleX, scaleY, colorAnim)
+        animSet.start()
+    }
+
+    private fun createView(): View {
         val view = View(context)
         val layoutParams = LayoutParams(startSize.toInt(), startSize.toInt())
-        if(relativeTo != 0){
+        if (relativeTo != 0) {
             val relatedView = findViewById(relativeTo)
-            layoutParams.leftMargin = (relatedView.x + relatedView.width/2 - startSize/2).toInt()
-            layoutParams.topMargin =  (relatedView.y + relatedView.height/2 - startSize/2).toInt()
+            layoutParams.leftMargin = (relatedView.x + relatedView.width / 2 - startSize / 2).toInt()
+            layoutParams.topMargin = (relatedView.y + relatedView.height / 2 - startSize / 2).toInt()
         } else {
             layoutParams.leftMargin = (startX).toInt()
             layoutParams.topMargin = startY.toInt()
         }
         view.layoutParams = layoutParams
         view.background = createGradientDrawable()
-        view.visibility = View.GONE
-        addView(view, 0)
-        animatedViews.add(view)
-        startScaleAnimation(view, startDelay)
+        return view
     }
 
     private fun createGradientDrawable(): GradientDrawable {
@@ -104,40 +112,24 @@ class WaveAnimateRelativeLayout: RelativeLayout {
         }
     }
 
-    private fun startScaleAnimation(view: View, delay: Int){
-        Log.d("WaveAnimate","width - $width")
-        val animation = ScaleAnimation(1f, zoom, 1f, zoom, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-        animation.duration = animDuration.toLong()
-        animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animation) {
-                view.startAnimation(animation)
-            }
-
-            override fun onAnimationStart(animation: Animation?) {
-                startColorAnim(view)
-            }
-
-        })
-        Handler().postDelayed({
-            view.visibility = View.VISIBLE
-            view.startAnimation(animation)
-        }, delay.toLong())
+    private fun createScaleAnimator(view: View, property: Property<View, Float>, zoom: Float): ObjectAnimator{
+        return ObjectAnimator.ofFloat(view, property, startSize, zoom).apply {
+            duration = animDuration
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.RESTART
+        }
     }
 
-
-
-    private fun startColorAnim(view: View){
+    private fun createColorAnimator(view: View): ValueAnimator{
         val colorAnim = ObjectAnimator.ofObject(ArgbEvaluator(), startColor, endColor)
-        colorAnim.duration = animDuration.toLong()
+        colorAnim.duration = animDuration
         colorAnim.interpolator = AccelerateDecelerateInterpolator()
+        colorAnim.repeatCount = ObjectAnimator.INFINITE
+        colorAnim.repeatMode = ObjectAnimator.RESTART
         colorAnim.addUpdateListener {
             (view.background as GradientDrawable).colors = intArrayOf(getAnimStartColor(it.animatedFraction), it.animatedValue as Int)
         }
-        colorAnim.start()
+        return colorAnim
     }
 
     private fun getAnimStartColor(fraction: Float): Int{
